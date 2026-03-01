@@ -5,42 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Torque Master 150</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
-        canvas { border: 1px solid #000; display: block; margin: 20px auto; }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
-    <h1>Torque Master 150</h1>
+    <div id="hud">
+        <h1>Torque Master 150</h1>
+        <div id="score">Score: 0</div>
+        <div id="lives">Lives: 3</div>
+    </div>
     <canvas id="gameCanvas" width="800" height="600"></canvas>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        let score = 0;
+        let lives = 3;
         let isGameOver = false;
 
-        function startGame() {
-            // Initialize game variables here
-            requestAnimationFrame(gameLoop);
+        // Game State
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            isGameOver = false;
+            // Add more initialization logic here
         }
 
+        // Drawing Functions
+        function drawHUD() {
+            ctx.fillStyle = "black";
+            ctx.font = "20px Arial";
+            ctx.fillText(`Score: ${score}`, 10, 30);
+            ctx.fillText(`Lives: ${lives}`, 10, 60);
+        }
+
+        // Game Loop
         function gameLoop() {
-            if (isGameOver) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            updateGame();
-            drawGame();
-            requestAnimationFrame(gameLoop);
+            drawHUD();
+            // Add more drawing logic here
+
+            if (!isGameOver) {
+                requestAnimationFrame(gameLoop);
+            }
         }
 
-        function updateGame() {
-            // Update game state here
+        // Event Listeners
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && isGameOver) {
+                resetGame();
+                gameLoop();
+            }
+        });
+
+        // Scoreboard Functions
+        function updateScore() {
+            localStorage.setItem('bestScore', Math.max(score, localStorage.getItem('bestScore') || 0));
         }
 
-        function drawGame() {
-            // Draw game elements here
-            ctx.fillStyle = 'red';
-            ctx.fillRect(50, 50, 100, 100);
-        }
-
-        startGame();
+        // Start Game
+        resetGame();
+        gameLoop(); 
     </script>
 </body>
 </html>
